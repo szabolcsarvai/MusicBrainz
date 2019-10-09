@@ -1,7 +1,8 @@
-package com.szabolcs.musicbrainz
+package com.szabolcs.musicbrainz.feature
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.szabolcs.musicbrainz.R
 
 class MainActivity : AppCompatActivity() {
 
