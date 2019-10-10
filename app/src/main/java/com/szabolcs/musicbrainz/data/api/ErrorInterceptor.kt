@@ -19,9 +19,7 @@ class ErrorInterceptor(private val resourceWrapper: ResourceWrapper, private val
             response = chain.proceed(request)
             if (!response.isSuccessful) {
                 val errorString = response.body()?.string()
-                gson.fromJson(errorString, ErrorObject::class.java).also {
-                    throw ServiceError(it.messages[0], it.code)
-                }
+                throw ServiceError(errorString ?: "", 1)
             }
         } catch (exception: UnknownHostException) {
             throw ServiceError(resourceWrapper.getString(R.string.no_network), errorCode = NETWORK_ERROR)
