@@ -1,7 +1,11 @@
 <resources>
+
     <string name="app_name">MusicBrainz</string>
+
+    <string name="search_menu">Search</string>
 
     <!--Error messages-->
     <string name="something_went_wrong">Something went wrong</string>
     <string name="no_network">No network</string>
+
 </resources>
