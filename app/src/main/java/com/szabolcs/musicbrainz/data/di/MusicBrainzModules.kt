@@ -1,9 +1,9 @@
 package com.szabolcs.musicbrainz.data.di
 
 import com.google.gson.GsonBuilder
-import com.szabolcs.musicbrainz.data.SearchRecordingInteractor
+import com.szabolcs.musicbrainz.data.SearchPlacesInteractor
 import com.szabolcs.musicbrainz.data.api.NetworkingManager
-import com.szabolcs.musicbrainz.data.repository.RecordingRepositoryImpl
+import com.szabolcs.musicbrainz.data.repository.PlacesRepositoryImpl
 import com.szabolcs.musicbrainz.feature.MainViewModel
 import com.szabolcs.musicbrainz.util.ResourceWrapper
 import org.koin.android.ext.koin.androidContext
@@ -15,11 +15,11 @@ val featureModule = module {
 }
 
 val interactorModule = module {
-    single { SearchRecordingInteractor(get()) }
+    single { SearchPlacesInteractor(get()) }
 }
 
 val repositoryModule = module {
-    single { RecordingRepositoryImpl(get()) }
+    single { PlacesRepositoryImpl(get()) }
 }
 
 val networkingModule = module {

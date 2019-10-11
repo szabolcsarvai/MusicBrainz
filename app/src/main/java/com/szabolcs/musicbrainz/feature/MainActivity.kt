@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
 
         viewModel.records.observe(this, Observer {
+            viewModel.loading.set(false)
             viewModel.fetchedSize.set(it.size.toString())
         })
     }

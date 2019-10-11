@@ -21,5 +21,5 @@ class NetworkingManager(gson: Gson, resourceWrapper: ResourceWrapper) {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    val musicService = retrofit.create(MusicService::class.java)
+    val placesService: MusicService = retrofit.create(MusicService::class.java)
 }
