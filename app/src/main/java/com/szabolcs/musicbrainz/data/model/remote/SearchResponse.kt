@@ -6,5 +6,5 @@ data class SearchResponse(
     @SerializedName("created") val timestamp: String,
     @SerializedName("count") val count: Int,
     @SerializedName("offset") val offset: Int,
-    @SerializedName("places") val places: List<Place>
+    @SerializedName("places") val placesResponses: List<PlaceResponse>
 )
