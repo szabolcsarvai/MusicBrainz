@@ -27,7 +27,7 @@ class MainViewModel(private val searchRecordingInteractor: SearchPlacesInteracto
             while (true) {
                 delay(1000)
                 markers.forEach { placeMarker ->
-                    placeMarker.lifeSpan -= 1
+                    --placeMarker.lifeSpan
                     if (placeMarker.lifeSpan == 0) {
                         placeMarker.marker.remove()
                     }

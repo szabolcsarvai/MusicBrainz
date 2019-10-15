@@ -1,11 +1,10 @@
 package com.szabolcs.musicbrainz.data.repository
 
-import androidx.lifecycle.LiveData
 import com.szabolcs.musicbrainz.data.model.remote.PlaceResponse
 
 interface PlacesRepository {
 
-    fun searchPlaces(query: String, limit: Int): LiveData<List<PlaceResponse>>
+    suspend fun searchPlaces(query: String, limit: Int): List<PlaceResponse>
 
     fun cancelAllRequests()
 }

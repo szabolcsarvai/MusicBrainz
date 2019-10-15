@@ -1,7 +1,6 @@
 package com.szabolcs.musicbrainz.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import com.szabolcs.musicbrainz.ControlledRunner
 import com.szabolcs.musicbrainz.data.api.NetworkingManager
 import com.szabolcs.musicbrainz.data.model.remote.PlaceResponse
 import com.szabolcs.musicbrainz.data.model.remote.SearchResponse
@@ -14,11 +13,13 @@ class PlacesRepositoryImpl(private val networkingManager: NetworkingManager) : P
 
     private val parentJob = Job()
 
+    var controlledRunner = ControlledRunner<List<PlaceResponse>>()
+
     private val coroutineContext: CoroutineContext
         get() = parentJob + Dispatchers.IO
 
-    override fun searchPlaces(query: String, limit: Int): LiveData<List<PlaceResponse>> {
-        return liveData(coroutineContext) {
+    override suspend fun searchPlaces(query: String, limit: Int): List<PlaceResponse> {
+        return controlledRunner.cancelPreviousThenRun {
             var isNotDone = true
             var offset = 0
             val list = mutableListOf<PlaceResponse>()
@@ -32,10 +33,10 @@ class PlacesRepositoryImpl(private val networkingManager: NetworkingManager) : P
                 }
                 offset = retrievedData.offset + limit
             }
-           val newList = list.filter { placeResponse ->
+
+            list.filter { placeResponse ->
                 placeResponse.hasValidCoordinates() && placeResponse.hasValidLifeSpan()
             }
-            emit(newList)
         }
     }
 
