@@ -66,7 +66,10 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        query?.let { viewModel.search(it) }
+        query?.let {
+            hideKeyboard()
+            viewModel.search(it)
+        }
         return true
     }
 
