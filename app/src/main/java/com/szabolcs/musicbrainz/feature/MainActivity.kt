@@ -1,8 +1,10 @@
 package com.szabolcs.musicbrainz.feature
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -10,6 +12,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.szabolcs.musicbrainz.MainBinding
 import com.szabolcs.musicbrainz.R
 import com.szabolcs.musicbrainz.data.model.Place
@@ -20,20 +23,28 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
 
     private val viewModel by viewModel<MainViewModel>()
     private lateinit var map: GoogleMap
+    private lateinit var binding: MainBinding
+    private var query: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DataBindingUtil.setContentView<MainBinding>(this, R.layout.activity_main).also {
+        binding = DataBindingUtil.setContentView<MainBinding>(this, R.layout.activity_main).also {
             it.viewModel = viewModel
         }
 
         (supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment)
             .getMapAsync(this)
 
-        viewModel.records.observe(this, Observer {
+        viewModel.records.observe(this, Observer { response ->
+            hideKeyboard()
             viewModel.loading.set(false)
-            addMarkers(it)
+            response.error?.let { error ->
+                showSnackbar(error.message)
+            }
+            response.listOfData?.let { places ->
+                addMarkers(places)
+            }
         })
     }
 
@@ -49,7 +60,10 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
         map = googleMap
     }
 
-    override fun onQueryTextChange(newText: String?) = true
+    override fun onQueryTextChange(newText: String?): Boolean {
+        query = newText
+        return true
+    }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         query?.let { viewModel.search(it) }
@@ -69,6 +83,19 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
                 .title(place.name)
         ).also { marker ->
             viewModel.markers.add(PlaceMarker(marker, place.lifeSpan))
+        }
+    }
+
+    private fun AppCompatActivity.showSnackbar(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).setAction(R.string.retry) {
+            onQueryTextSubmit(query)
+        }.show()
+    }
+
+    private fun AppCompatActivity.hideKeyboard() {
+        currentFocus?.let { view ->
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }

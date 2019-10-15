@@ -18,8 +18,7 @@ class ErrorInterceptor(private val resourceWrapper: ResourceWrapper, private val
         try {
             response = chain.proceed(request)
             if (!response.isSuccessful) {
-                val errorString = response.body()?.string()
-                throw ServiceError(errorString ?: "", 1)
+                throw ServiceError(resourceWrapper.getString(R.string.something_went_wrong), 1)
             }
         } catch (exception: UnknownHostException) {
             throw ServiceError(resourceWrapper.getString(R.string.no_network), errorCode = NETWORK_ERROR)
@@ -32,6 +31,4 @@ class ErrorInterceptor(private val resourceWrapper: ResourceWrapper, private val
     companion object {
         const val NETWORK_ERROR = 1
     }
-
-    data class ErrorObject(val data: String?, val messages: List<String>, val code: Int)
 }

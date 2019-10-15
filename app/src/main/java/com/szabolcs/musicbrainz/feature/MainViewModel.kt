@@ -1,10 +1,7 @@
 package com.szabolcs.musicbrainz.feature
 
 import androidx.databinding.ObservableBoolean
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.szabolcs.musicbrainz.data.interactor.SearchPlacesInteractor
 import com.szabolcs.musicbrainz.data.model.PlaceMarker
 import kotlinx.coroutines.delay
@@ -12,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val searchRecordingInteractor: SearchPlacesInteractor) : ViewModel() {
 
-    private val query = MutableLiveData<String>()
+    val query = MutableLiveData<String>()
 
     val loading = ObservableBoolean(false)
 
