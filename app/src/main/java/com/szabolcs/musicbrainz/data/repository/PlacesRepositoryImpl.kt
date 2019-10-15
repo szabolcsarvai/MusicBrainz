@@ -5,6 +5,8 @@ import androidx.lifecycle.liveData
 import com.szabolcs.musicbrainz.data.api.NetworkingManager
 import com.szabolcs.musicbrainz.data.model.remote.PlaceResponse
 import com.szabolcs.musicbrainz.data.model.remote.SearchResponse
+import com.szabolcs.musicbrainz.data.model.remote.hasValidCoordinates
+import com.szabolcs.musicbrainz.data.model.remote.hasValidLifeSpan
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -15,7 +17,7 @@ class PlacesRepositoryImpl(private val networkingManager: NetworkingManager) : P
     private val coroutineContext: CoroutineContext
         get() = parentJob + Dispatchers.IO
 
-    override fun searchPlaces(query: String, limit: Int): LiveData<MutableList<PlaceResponse>> {
+    override fun searchPlaces(query: String, limit: Int): LiveData<List<PlaceResponse>> {
         return liveData(coroutineContext) {
             var isNotDone = true
             var offset = 0
@@ -30,10 +32,10 @@ class PlacesRepositoryImpl(private val networkingManager: NetworkingManager) : P
                 }
                 offset = retrievedData.offset + limit
             }
-            list.filter {
-                it.coordinates != null && it.lifeSpan != null
+           val newList = list.filter { placeResponse ->
+                placeResponse.hasValidCoordinates() && placeResponse.hasValidLifeSpan()
             }
-            emit(list)
+            emit(newList)
         }
     }
 

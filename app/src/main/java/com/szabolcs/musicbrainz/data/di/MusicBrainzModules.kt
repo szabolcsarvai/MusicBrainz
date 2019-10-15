@@ -1,7 +1,7 @@
 package com.szabolcs.musicbrainz.data.di
 
 import com.google.gson.GsonBuilder
-import com.szabolcs.musicbrainz.data.SearchPlacesInteractor
+import com.szabolcs.musicbrainz.data.interactor.SearchPlacesInteractor
 import com.szabolcs.musicbrainz.data.api.NetworkingManager
 import com.szabolcs.musicbrainz.data.repository.PlacesRepositoryImpl
 import com.szabolcs.musicbrainz.feature.MainViewModel

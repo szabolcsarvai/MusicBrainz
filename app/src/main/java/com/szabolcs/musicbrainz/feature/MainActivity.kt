@@ -13,15 +13,20 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.szabolcs.musicbrainz.MainBinding
 import com.szabolcs.musicbrainz.R
 import com.szabolcs.musicbrainz.data.model.Place
+import com.szabolcs.musicbrainz.data.model.PlaceMarker
+import kotlinx.coroutines.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapReadyCallback {
 
     private val viewModel by viewModel<MainViewModel>()
     private lateinit var map: GoogleMap
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        uiScope.cancel()
 
         DataBindingUtil.setContentView<MainBinding>(this, R.layout.activity_main).also {
             it.viewModel = viewModel
@@ -32,11 +37,14 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
 
         viewModel.records.observe(this, Observer {
             viewModel.loading.set(false)
-            map.clear()
-            it.forEach { place ->
-                addMarker(place)
-            }
+            addMarkers(it)
         })
+    }
+
+    private fun addMarkers(places: List<Place>) {
+        viewModel.markers.clear()
+        map.clear()
+        places.forEach { place -> addMarker(place) }
     }
 
     private fun addMarker(place: Place) {
@@ -44,7 +52,9 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
             MarkerOptions()
                 .position(place.latLng)
                 .title(place.name)
-        )
+        ).also { marker ->
+            viewModel.markers.add(PlaceMarker(marker, place.lifeSpan))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

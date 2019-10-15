@@ -5,7 +5,7 @@ import com.szabolcs.musicbrainz.data.model.remote.PlaceResponse
 
 interface PlacesRepository {
 
-    fun searchPlaces(query: String, limit: Int): LiveData<MutableList<PlaceResponse>>
+    fun searchPlaces(query: String, limit: Int): LiveData<List<PlaceResponse>>
 
     fun cancelAllRequests()
 }

@@ -7,9 +7,9 @@ data class LifeSpan(
     @SerializedName("ended") val ended: Boolean?
 )
 
-fun LifeSpan.getOpenYear(): Int {
+fun LifeSpan.getLifeSpanInSeconds(): Int {
     begin?.let {
-        return begin.substring(0, 3).toInt()
+        return begin.substring(0, 4).toInt() - 1990
     }
     return 0
 }

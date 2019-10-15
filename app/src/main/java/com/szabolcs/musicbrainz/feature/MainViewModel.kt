@@ -1,21 +1,42 @@
 package com.szabolcs.musicbrainz.feature
 
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.szabolcs.musicbrainz.data.SearchPlacesInteractor
+import androidx.lifecycle.viewModelScope
+import com.szabolcs.musicbrainz.data.interactor.SearchPlacesInteractor
+import com.szabolcs.musicbrainz.data.model.PlaceMarker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainViewModel(private val searchRecordingInteractor: SearchPlacesInteractor) : ViewModel() {
 
-    val fetchedSize = ObservableField<String>()
     private val query = MutableLiveData<String>()
 
     val loading = ObservableBoolean(false)
 
     val records = Transformations.switchMap(query) { query ->
         searchRecordingInteractor.searchPlaces(query)
+    }
+
+    var markers = mutableListOf<PlaceMarker>()
+
+    init {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                markers.forEach { placeMarker ->
+                    placeMarker.lifeSpan -= 1
+                    if (placeMarker.lifeSpan == 0) {
+                        placeMarker.marker.remove()
+                    }
+                }
+                markers = markers.filter {
+                    it.lifeSpan > 0
+                }.toMutableList()
+            }
+        }
     }
 
     fun search(query: String) {
