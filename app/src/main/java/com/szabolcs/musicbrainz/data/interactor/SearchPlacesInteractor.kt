@@ -6,7 +6,6 @@ import com.szabolcs.musicbrainz.data.repository.PlacesRepositoryImpl
 import com.szabolcs.musicbrainz.util.responseMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 class SearchPlacesInteractor(private val recordingRepository: PlacesRepositoryImpl) : SearchPlacesUseCase {
@@ -20,5 +19,5 @@ class SearchPlacesInteractor(private val recordingRepository: PlacesRepositoryIm
             responseMapper(newData)
         }
 
-    override fun cancelAllRequests() = coroutineContext.cancel()
+    override fun cancelAllRequests() = parentJob.cancel()
 }
