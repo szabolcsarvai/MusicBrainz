@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
             .getMapAsync(this)
 
         viewModel.records.observe(this, Observer { response ->
-            hideKeyboard()
             viewModel.loading.set(false)
             response.error?.let { error ->
                 showSnackbar(error.message)

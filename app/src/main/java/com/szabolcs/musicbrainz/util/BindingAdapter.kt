@@ -1,9 +1,15 @@
 package com.szabolcs.musicbrainz.util
 
-import android.view.View
 import androidx.databinding.BindingAdapter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
-@BindingAdapter("android:visibility")
-fun setVisibility(view: View, value: Boolean) {
-    view.visibility = if (value) View.VISIBLE else View.GONE
+@BindingAdapter("isLoading")
+fun setLoading(swipeRefreshLayout: SwipeRefreshLayout, isRefreshing: Boolean) {
+    swipeRefreshLayout.isRefreshing = isRefreshing
+}
+
+
+@BindingAdapter("enabled")
+fun setEnabled(swipeRefreshLayout: SwipeRefreshLayout, enabled: Boolean) {
+    swipeRefreshLayout.isEnabled = enabled
 }

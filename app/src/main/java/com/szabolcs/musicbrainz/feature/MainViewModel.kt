@@ -9,15 +9,12 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val searchRecordingInteractor: SearchPlacesInteractor) : ViewModel() {
 
-    val query = MutableLiveData<String>()
-
+    private val query = MutableLiveData<String>()
     val loading = ObservableBoolean(false)
-
+    var markers = mutableListOf<PlaceMarker>()
     val records = Transformations.switchMap(query) { query ->
         searchRecordingInteractor.searchPlaces(query)
     }
-
-    var markers = mutableListOf<PlaceMarker>()
 
     init {
         viewModelScope.launch {
