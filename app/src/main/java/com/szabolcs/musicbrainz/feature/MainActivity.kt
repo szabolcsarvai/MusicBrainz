@@ -1,10 +1,8 @@
 package com.szabolcs.musicbrainz.feature
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -12,11 +10,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.snackbar.Snackbar
 import com.szabolcs.musicbrainz.MainBinding
 import com.szabolcs.musicbrainz.R
 import com.szabolcs.musicbrainz.data.model.Place
 import com.szabolcs.musicbrainz.data.model.PlaceMarker
+import com.szabolcs.musicbrainz.util.hideKeyboard
+import com.szabolcs.musicbrainz.util.showSnackbar
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapReadyCallback {
@@ -39,7 +38,9 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
         viewModel.records.observe(this, Observer { response ->
             viewModel.loading.set(false)
             response.error?.let { error ->
-                showSnackbar(error.message)
+                binding.root.showSnackbar(error.message) {
+                    onQueryTextSubmit(query)
+                }
             }
             response.listOfData?.let { places ->
                 addMarkers(places)
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         query?.let {
-            hideKeyboard()
+            currentFocus?.hideKeyboard()
             viewModel.search(it)
         }
         return true
@@ -85,19 +86,6 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
                 .title(place.name)
         ).also { marker ->
             viewModel.markers.add(PlaceMarker(marker, place.lifeSpan))
-        }
-    }
-
-    private fun AppCompatActivity.showSnackbar(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).setAction(R.string.retry) {
-            onQueryTextSubmit(query)
-        }.show()
-    }
-
-    private fun AppCompatActivity.hideKeyboard() {
-        currentFocus?.let { view ->
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }
