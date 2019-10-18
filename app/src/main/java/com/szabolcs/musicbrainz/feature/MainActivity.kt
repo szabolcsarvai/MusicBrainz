@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener, OnMapR
 
         binding = DataBindingUtil.setContentView<MainBinding>(this, R.layout.activity_main).also {
             it.viewModel = viewModel
+            it.lifecycleOwner = this
         }
 
         (supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment)
