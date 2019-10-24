@@ -35,7 +35,7 @@ class MainViewModel(private val searchRecordingInteractor: SearchPlacesInteracto
 
     fun search(query: String) {
         loading.set(true)
-        this.query.postValue(query)
+        this.query.value= query
     }
 
     override fun onCleared() {
